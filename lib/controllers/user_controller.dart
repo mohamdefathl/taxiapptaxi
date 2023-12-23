@@ -5,5 +5,6 @@ class UserController extends GetxController {
 
   void setUserData(value) {
     user = value;    
+    print(value);
   }
 }

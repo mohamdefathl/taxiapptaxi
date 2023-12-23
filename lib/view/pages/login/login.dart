@@ -1,10 +1,9 @@
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:texiapptaxi/constant/color.dart';
 import 'package:texiapptaxi/controllers/login_controller.dart';
-
-
 import 'package:texiapptaxi/view/widget/login/button.dart';
 import 'package:texiapptaxi/view/widget/login/inputFiled.dart';
 
@@ -17,8 +16,6 @@ class Login extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(),
-      // appBar: AppBar(toolbarHeight: 0),
       body: Form(
         key: _formKey,
         child: Stack(
@@ -72,9 +69,11 @@ class Login extends StatelessWidget {
                           }
                         },
                       ),
-                      ElevatedButton(onPressed: (){
-                        _loginController.loginToken();
-                      }, child: Text("data")),
+                      ElevatedButton(
+                          onPressed: () {                            
+                            Get.offAllNamed('/');
+                          },
+                          child: Text("data")),
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.05,
                       ),
@@ -104,21 +103,32 @@ class Login extends StatelessWidget {
                             if (isConnected) {
                               Get.dialog(const Center(
                                 child: CircularProgressIndicator(
-                                    color: AppColor.primary),
+                                  color: AppColor.primary,
+                                ),
                               ));
                               try {
-                                await _loginController.login();
-                                Get.back();
+                                await _loginController
+                                    .login()
+                                    .timeout(const Duration(seconds: 18));
                               } catch (e) {
                                 Get.back();
-                                _loginController.printMessage(
-                                    'يرجى اعادة المحاولة والتحقق من صحة الانترنت',
-                                    'حدث خطاء ما');
+                                if (e is TimeoutException) {
+                                  _loginController.printMessage(
+                                    'حدث خطأ ما ,يرجى التاكد من صحة الانترنت واعادة المحاولة',
+                                    'حدث خطاً ما',
+                                  );
+                                } else {
+                                  _loginController.printMessage(
+                                    'يرجى التحقق من اتصال الإنترنت والمحاولة مرة أخرى.',
+                                    'خطأ',
+                                  );
+                                }
                               }
                             } else {
                               _loginController.printMessage(
-                                  'يرجى الاتصال بالانترنت والمحاولة مرة اخرى',
-                                  'لايوجد اتصال بالانترنت');
+                                'يرجى الاتصال بالإنترنت والمحاولة مرة أخرى.',
+                                'لا يوجد اتصال بالإنترنت',
+                              );
                             }
                           }
                         },

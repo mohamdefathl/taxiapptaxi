@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -6,19 +7,33 @@ import 'package:texiapptaxi/controllers/auth/auth_controller.dart';
 import 'package:texiapptaxi/controllers/user_controller.dart';
 import 'package:texiapptaxi/core/AppUrl.dart';
 import 'package:flutter/material.dart';
+import 'package:texiapptaxi/core/stateRequset.dart';
+import 'package:texiapptaxi/services/services.dart';
 import 'package:texiapptaxi/view/widget/general/dialog.dart';
 
 class LoginController extends GetxController {
   final UserController userController = Get.put(UserController());
-  final AuthController authController = Get.find<AuthController>();
-
+  // final AuthController authController = Get.find<AuthController>();
+  final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
+  MyServices myServices = Get.find();
+  late StatusRequest statusRequest;
   final nameText = TextEditingController();
   final passText = TextEditingController();
   @override
   void onClose() {
-    nameText.dispose();
-    passText.dispose();
+    // nameText.dispose();
+    // passText.dispose();
     super.onClose();
+  }
+
+  Future<bool> isConnectedToWifi() async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   void printMessage(String content, String title) {
@@ -32,20 +47,39 @@ class LoginController extends GetxController {
         confirmTitle: "اغلاق");
   }
 
-  Future<bool> isConnectedToWifi() async {
-    var connectivityResult = await (Connectivity().checkConnectivity());
-    if (connectivityResult == ConnectivityResult.mobile ||
-        connectivityResult == ConnectivityResult.wifi) {
-      return true;
-    } else {
-      return false;
-    }
-  }
+  // login() async {
+  //   if (formKey.currentState!.validate()) {
+  //     statusRequest = StatusRequest.loading;
+  //     update();
+  //     var response = await loginData.postData(
+  //         userName: userNameController.text, password: passwordController.text);
+  //     statusRequest = handlingData(response);
+  //     if (statusRequest == StatusRequest.success) {
+  //       userModel = UserModel.fromJson(response);
+  //       if (response['user']['role'] == 'customer') {
+  //         myServices.isLogedIn = true;
+  //         await myServices.secureStorage
+  //             .write(key: 'token', value: response['token']);
 
+  //         Get.toNamed("/");
+  //       } else {
+  //         // print('admin');
+  //       }
+  //     } else {
+  //       Get.defaultDialog(
+  //           title: 'Warning', middleText: 'Wrong password or username');
+  //     }
+
+  //     update();
+  //   }
+  // }
   Future<void> login() async {
     try {
       final Map<String, String> headers = {'Content-Type': 'application/json'};
-      final Map<String, String> body = {'username': 'taxi', 'password': '123'};
+      final Map<String, String> body = {
+        'username': 'mosmosmos',
+        'password': 'samQAZ123'
+      };
       final String requestBody = json.encode(body);
 
       final http.Response response = await http.post(
@@ -58,56 +92,42 @@ class LoginController extends GetxController {
       final Map<String, dynamic> data = json.decode(response.body);
 
       if (statusCode >= 200 && statusCode < 300) {
-        final token = data['token'];
         final user = data['user'];
-
-        authController.setToken(token);
         userController.setUserData(user);
-        authController.setRole(user['role']);
-        print(data);
+
         if (user['role'] == "taxi") {
-          // Get.offAllNamed('/taxihome');
-          // Get.delete<LoginController>();
+          await secureStorage
+              .write(key: 'auth_token', value: data['token']);
+          myServices.isLogedIn = true;
+          myServices.token=data['token'];
+                    
+
+          Get.toNamed('/');
+          Get.delete<LoginController>();          
         } else {
-          throw Exception('Invalid user role');
+          Get.back();
+          printMessage("يرجى التاكد من صحة البيانات", "حدث خطاء ");
         }
       } else if (statusCode == 400) {
-        throw Exception('Invalid data');
+        // throw Exception('Invalid data');
+        Get.back();
+        printMessage("يرجى التاكد من صحة البيانات", "حدث خطاء ");
       } else if (statusCode == 401) {
+        Get.back();
         throw Exception('Unauthorized');
       } else if (statusCode == 404) {
-        printMessage(
-            'يرجى التاكد من صحة الانترنت والمحاولة مره اخرى', "حدث خطاء ما");
+        // print("404 $statusCode");
+        Get.back();
+        throw Exception('User not found');
       } else {
-        printMessage(
-            'يرجى التاكد من صحة الانترنت والمحاولة مره اخرى', "حدث خطاء ما");
+        print("000 $statusCode");
+        Get.back();
+        throw Exception('Unknown error occurred');
       }
     } catch (e) {
+      Get.back();
       printMessage(
           'يرجى التاكد من صحة الانترنت والمحاولة مره اخرى', "حدث خطاء ما");
-    }
-  }
-
-  Future<void> loginToken() async {
-    try {
-      final url = Uri.parse(AppApiUrl.authWithToken);
-
-      final response = await http.get(
-        url,
-        headers: {
-          'Authorization': 'Token be0b39d1c793a07158b78fe4f3c6caa6e7e21d30',
-        },
-        
-      );
-      final data = json.decode(utf8.decode(response.bodyBytes));
-      print(data);
-      if (response.statusCode == 200) {
-        final data = json.decode(utf8.decode(response.bodyBytes));
-
-        print(data);
-      }
-    } catch (e) {
-      print('Error: $e');
     }
   }
 }

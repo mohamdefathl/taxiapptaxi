@@ -12,30 +12,23 @@ import 'package:texiapptaxi/functions/hundlingdata.dart';
 // import 'package:texiapptaxi/view/pages/detail/detailpage.dart';
 import 'package:http/http.dart' as http;
 
+
 class TaxiOrdersController extends GetxController {
   TaxiOrderPageData orderPageData = TaxiOrderPageData(Get.find());
 
   final AuthController authController = Get.find<AuthController>();
-
+    
   @override
   void onInit() async {
     statusRequest = StatusRequest.loading;
-    String token = authController.token;
+    String token = authController.token!;
 
     await getData(token);
 
     super.onInit();
   }
-
-  List data = [];
-  String? status;
-  late StatusRequest statusRequest;
-
-  // void navigateToDetailPage(OrderModel orderModel) {
-  //   Get.to(() => DetailPage(orderModel: orderModel));
-  // }
-
-  Future getData(String token) async {
+  
+Future getData(String token) async {
     statusRequest = StatusRequest.loading;
     var response = await orderPageData.getData(token);
     statusRequest = handlingData(response);
@@ -45,6 +38,15 @@ class TaxiOrdersController extends GetxController {
 
     update();
   }
+  List data = [];
+  String? status;
+  late StatusRequest statusRequest;
+
+  // void navigateToDetailPage(OrderModel orderModel) {
+  //   Get.to(() => DetailPage(orderModel: orderModel));
+  // }
+
+  
 
   Future<void> updateTaxiOrderState(int orderId) async {
     print(authController.token);

@@ -6,19 +6,16 @@ import 'package:texiapptaxi/constant/color.dart';
 import 'package:texiapptaxi/controllers/taxi_controllers/taxiorders_controller.dart';
 import 'package:texiapptaxi/core/handlingdataview.dart';
 import 'package:texiapptaxi/data/models/taxi_orders_model.dart';
+import 'package:texiapptaxi/services/services.dart';
 import 'package:texiapptaxi/view/pages/taxiDetail/taxidetail.dart';
 import 'package:texiapptaxi/view/widget/TaxiWidgets/taxiorder/taxiorder.dart';
 
-
-
-import 'package:url_launcher/url_launcher.dart';
-
-
 class TaxiOrders extends StatelessWidget {
-  TaxiOrders({super.key});
+  const TaxiOrders({super.key});
 
   @override
   Widget build(BuildContext context) {
+    
     TextTheme themeText = Theme.of(context).textTheme;
     return Scaffold(
       body: CustomScrollView(
@@ -69,7 +66,7 @@ class TaxiOrders extends StatelessWidget {
                         taxiOrderModel: taxiOrderModel,
                       );
                     },
-                    childCount: controller.data.length,
+                    childCount: controller.data.length ,
                   ),
                 ),
               );
@@ -80,5 +77,3 @@ class TaxiOrders extends StatelessWidget {
     );
   }
 }
-
-
