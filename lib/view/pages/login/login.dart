@@ -1,10 +1,9 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:texiapptaxi/constant/color.dart';
 import 'package:texiapptaxi/controllers/login_controller.dart';
-import 'package:texiapptaxi/view/widget/general/dialog.dart';
+
 
 import 'package:texiapptaxi/view/widget/login/button.dart';
 import 'package:texiapptaxi/view/widget/login/inputFiled.dart';
@@ -32,8 +31,7 @@ class Login extends StatelessWidget {
                 style: Theme.of(context)
                     .textTheme
                     .titleSmall!
-                    .copyWith(color: Colors.grey,fontSize: 10),
-                    
+                    .copyWith(color: Colors.grey, fontSize: 10),
               ),
             ),
             Center(
@@ -74,6 +72,9 @@ class Login extends StatelessWidget {
                           }
                         },
                       ),
+                      ElevatedButton(onPressed: (){
+                        _loginController.loginToken();
+                      }, child: Text("data")),
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.05,
                       ),
@@ -105,19 +106,19 @@ class Login extends StatelessWidget {
                                 child: CircularProgressIndicator(
                                     color: AppColor.primary),
                               ));
-                              await _loginController
-                                  .login()
-                                  .then((_) => Get.back());
+                              try {
+                                await _loginController.login();
+                                Get.back();
+                              } catch (e) {
+                                Get.back();
+                                _loginController.printMessage(
+                                    'يرجى اعادة المحاولة والتحقق من صحة الانترنت',
+                                    'حدث خطاء ما');
+                              }
                             } else {
-                              dialog(
-                                  hasCancelButton: false,
-                                  title: "لايوجد اتصال بالانترنت",
-                                  content:
-                                      "يرجى الاتصال بالانترنت والمحاولة مرة اخرى",
-                                  confirmTitle: "المتابعة",
-                                  confirmOnClick: () {
-                                    Get.back();
-                                  });
+                              _loginController.printMessage(
+                                  'يرجى الاتصال بالانترنت والمحاولة مرة اخرى',
+                                  'لايوجد اتصال بالانترنت');
                             }
                           }
                         },
