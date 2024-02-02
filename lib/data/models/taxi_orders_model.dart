@@ -58,9 +58,9 @@ class Taxi {
   final int id;
   final String email;
   final String phone;
-  final String address;
-  final double latitude;
-  final double longitude;
+  final String? address;
+  final double? latitude;
+  final double? longitude;
   final String fullName;
 
   Taxi({
@@ -78,30 +78,29 @@ class Taxi {
       id: json['id'],
       email: json['email'],
       phone: json['phone'],
-      address: json['address'],
-      latitude: double.parse(json['latitude']),
-      longitude: double.parse(json['longitude']),
+      address: json['address'] == null ? '' : json['address'],
+      latitude:
+          json['latitude'] != null ? double.parse(json['latitude']) : null,
+      longitude:
+          json['longitude'] != null ? double.parse(json['longitude']) : null,
       fullName: json['full_name'],
     );
   }
 }
 
-
 class Customer {
   final String fullName;
-  
+
   final String phone;
 
   Customer({
     required this.fullName,
-    
     required this.phone,
   });
 
   factory Customer.fromJson(Map<String, dynamic> json) {
     return Customer(
       fullName: json['full_name'],
-
       phone: json['phone'],
     );
   }

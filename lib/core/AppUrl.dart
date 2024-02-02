@@ -1,5 +1,5 @@
 class AppApiUrl {
-  static const String server = "http://192.168.1.107:8000/";
+  static const String server = "http://192.168.0.103:8000/";
   // static const String server = "http://192.168.0.103:8000/";
   
   static const String auth = "${server}customer/login/";

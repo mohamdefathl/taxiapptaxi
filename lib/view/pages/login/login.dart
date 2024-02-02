@@ -43,7 +43,7 @@ class Login extends StatelessWidget {
                         width: 350,
                       ),
                       Text(
-                        " مرحباً بعودتك تحت امرك",
+                        " مرحباً بعودتك في تحت امرك",
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       Text(
@@ -69,11 +69,7 @@ class Login extends StatelessWidget {
                           }
                         },
                       ),
-                      ElevatedButton(
-                          onPressed: () {                            
-                            Get.offAllNamed('/');
-                          },
-                          child: Text("data")),
+                      
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.05,
                       ),

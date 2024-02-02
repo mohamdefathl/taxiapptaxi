@@ -70,7 +70,6 @@ class TaxiDetailPage extends StatelessWidget {
               child: CardIconButtonAppBar(
                 icon: Icons.map,
                 onCLick: () {
-                  
                   Get.back();
                 },
               ),
@@ -288,10 +287,19 @@ class TaxiDetailPage extends StatelessWidget {
                         outerColor: Theme.of(context).colorScheme.outline,
                         innerColor: Theme.of(context).colorScheme.tertiary,
                         onSubmit: () async {
-                          await _.updateTaxiOrderState(taxiOrderModel.id);
-                          Get.offAll(() => TaxiHome(),
-                              transition: Transition.fadeIn);
-                          taxiHomeController.onItemTapped(2);
+                          bool updateSuccessful =
+                              await _.updateTaxiOrderState(taxiOrderModel.id);
+
+                          if (updateSuccessful) {
+                            Get.offAll(() => TaxiHome(),
+                                transition: Transition.fadeIn);
+                            taxiHomeController.onItemTapped(2);
+                          } else {
+                            Get.defaultDialog(
+                              title: "خطأ",
+                              middleText: "حدث خطأ، حاول مرة أخرى",
+                            );
+                          }
                         },
                       );
                     },

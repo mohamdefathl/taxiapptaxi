@@ -16,9 +16,6 @@ void main() async {
   runApp(const MyApp());
 }
 
-// Future initalServices ()async{
-//   await Get.putAsync(() => MyServices().init());
-// }
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 

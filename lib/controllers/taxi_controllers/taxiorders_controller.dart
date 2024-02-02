@@ -1,23 +1,19 @@
 import 'dart:convert';
-
-import 'package:flutter/material.dart';
+import 'dart:developer';
+import 'package:texiapptaxi/services/services.dart';
 import 'package:get/get.dart';
 import 'package:texiapptaxi/controllers/auth/auth_controller.dart';
 import 'package:texiapptaxi/core/AppUrl.dart';
 import 'package:texiapptaxi/core/stateRequset.dart';
-import 'package:texiapptaxi/data/models/orders_model.dart';
 import 'package:texiapptaxi/data/remote/taxi.dart';
 import 'package:texiapptaxi/functions/hundlingdata.dart';
-
-// import 'package:texiapptaxi/view/pages/detail/detailpage.dart';
 import 'package:http/http.dart' as http;
-
 
 class TaxiOrdersController extends GetxController {
   TaxiOrderPageData orderPageData = TaxiOrderPageData(Get.find());
 
   final AuthController authController = Get.find<AuthController>();
-    
+  MyServices myServices = Get.find();
   @override
   void onInit() async {
     statusRequest = StatusRequest.loading;
@@ -27,8 +23,8 @@ class TaxiOrdersController extends GetxController {
 
     super.onInit();
   }
-  
-Future getData(String token) async {
+
+  Future getData(String token) async {
     statusRequest = StatusRequest.loading;
     var response = await orderPageData.getData(token);
     statusRequest = handlingData(response);
@@ -38,6 +34,7 @@ Future getData(String token) async {
 
     update();
   }
+
   List data = [];
   String? status;
   late StatusRequest statusRequest;
@@ -46,31 +43,25 @@ Future getData(String token) async {
   //   Get.to(() => DetailPage(orderModel: orderModel));
   // }
 
-  
-
-  Future<void> updateTaxiOrderState(int orderId) async {
-    print(authController.token);
-    print(orderId);
-
+  Future<bool> updateTaxiOrderState(int orderId) async {
     try {
       final response = await http.put(
         Uri.parse("${AppApiUrl.taxiUpdateOrderState}$orderId/"),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Token ${authController.token}',
+          'Authorization': 'Token ${myServices.token} ',
         },
         body: jsonEncode({"status": "completed"}),
       );
 
       if (response.statusCode == 200) {
-        print('PUT Request Successful');
-        print('Response: ${response.body}');
+        return true;
       } else {
-        print('PUT Request Failed with status code: ${response.statusCode}');
-        print('Error: ${response.body}');
+        return false;
       }
     } catch (error) {
       print('Error: $error');
+      return false;
     }
   }
 }

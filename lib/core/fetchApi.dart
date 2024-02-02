@@ -11,7 +11,7 @@ import 'package:texiapptaxi/services/services.dart';
 
 class FetchApi {
   
-  Future<Either<StatusRequest, Map>> postData(String urllink, Map data) async {
+Future<Either<StatusRequest, Map>> postData(String urllink, Map data) async {
     try {
       if (await checkInternet()) {
         var response = await http.post(Uri.parse(urllink), body: data);

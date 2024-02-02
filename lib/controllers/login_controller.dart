@@ -47,38 +47,12 @@ class LoginController extends GetxController {
         confirmTitle: "اغلاق");
   }
 
-  // login() async {
-  //   if (formKey.currentState!.validate()) {
-  //     statusRequest = StatusRequest.loading;
-  //     update();
-  //     var response = await loginData.postData(
-  //         userName: userNameController.text, password: passwordController.text);
-  //     statusRequest = handlingData(response);
-  //     if (statusRequest == StatusRequest.success) {
-  //       userModel = UserModel.fromJson(response);
-  //       if (response['user']['role'] == 'customer') {
-  //         myServices.isLogedIn = true;
-  //         await myServices.secureStorage
-  //             .write(key: 'token', value: response['token']);
-
-  //         Get.toNamed("/");
-  //       } else {
-  //         // print('admin');
-  //       }
-  //     } else {
-  //       Get.defaultDialog(
-  //           title: 'Warning', middleText: 'Wrong password or username');
-  //     }
-
-  //     update();
-  //   }
-  // }
   Future<void> login() async {
     try {
       final Map<String, String> headers = {'Content-Type': 'application/json'};
       final Map<String, String> body = {
-        'username': 'mosmosmos',
-        'password': 'samQAZ123'
+        'username': 'mohamed123',
+        'password': 'mosmosmos'
       };
       final String requestBody = json.encode(body);
 
@@ -101,8 +75,8 @@ class LoginController extends GetxController {
           myServices.isLogedIn = true;
           myServices.token=data['token'];
                     
-
           Get.toNamed('/');
+
           Get.delete<LoginController>();          
         } else {
           Get.back();
@@ -119,8 +93,7 @@ class LoginController extends GetxController {
         // print("404 $statusCode");
         Get.back();
         throw Exception('User not found');
-      } else {
-        print("000 $statusCode");
+      } else {        
         Get.back();
         throw Exception('Unknown error occurred');
       }
